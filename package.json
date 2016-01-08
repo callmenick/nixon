@@ -6,9 +6,9 @@
   "scripts": {
     "lint": "eslint src",
     "lint:watch": "watch 'npm run lint' src",
-    "dev": "nodemon --harmony src/server.js",
+    "dev": "nodemon --harmony server.js",
     "prod": "",
-    "start": "node --harmony src/server.js"
+    "start": "node --harmony server.js"
   },
   "author": "",
   "license": "MIT",
@@ -32,6 +32,9 @@
   "devDependencies": {
     "babel-eslint": "^4.1.6",
     "eslint": "^1.10.3",
+    "grunt": "^0.4.5",
+    "grunt-jsdoc": "^1.1.0",
+    "ink-docstrap": "^1.1.0",
     "morgan": "^1.6.1",
     "nodemon": "^1.8.1",
     "watch": "^0.17.1"

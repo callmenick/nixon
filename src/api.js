@@ -7,6 +7,7 @@
 
 const request = require('request');
 const winston = require('winston');
+const _ = require('lodash');
 
 /**
  * @name rtmStart
@@ -27,12 +28,14 @@ function rtmStart(token, cb) {
  * @param {Function} cb Callback function
  * @see https://api.slack.com/methods/chat.postMessage
  */
-function postMessage(token, channel, text, cb) {
-  const qs = {
-    channel: channel,
+function postMessage(token, channel, text, options, cb) {
+  const qs = _.extend(options, {
     text: text,
+    channel: channel,
     as_user: true
-  };
+  });
+
+  console.log(qs);
 
   apiCall(token, 'chat.postMessage', qs, cb);
 }

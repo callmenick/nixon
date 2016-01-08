@@ -8,10 +8,10 @@
 require('dotenv').load();
 
 const bodyParser = require('body-parser');
-const Bot = require('./Bot.js');
+const Bot = require('./src/Bot.js');
 const express = require('express');
 const http = require('http');
-const log = require('./util/log.js');
+const log = require('./src/util/log.js');
 const morgan = require('morgan');
 const token = process.env.API_TOKEN || '';
 const app = express();

@@ -8,10 +8,12 @@
 const chalk = require('chalk');
 const dateFormat = require('dateformat');
 
+/** @namespace log */
+
 /**
  * @name getTime
- * @description [description]
- * @return {[type]} [description]
+ * @memberOf log
+ * @description Gets the current time and formats it.
  */
 function getTime() {
   const now = new Date();
@@ -20,10 +22,8 @@ function getTime() {
 
 /**
  * @name log
- * @description [description]
- * @param {[type]} type [description]
- * @param {[type]} message [description]
- * @return {[type]} [description]
+ * @memberOf log
+ * @description Prints a formatted message to the console.
  */
 function log(type, message) {
   switch (type) {
