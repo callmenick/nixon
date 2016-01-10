@@ -1,121 +1,146 @@
 /* =============================================================================
     Name: api.js
-    Description: A collection of functions that exposes the Slack API.
+    Description: A wrapper around Slack's API.
     Author: Nick Salloum
     License: MIT
 ============================================================================= */
 
 const request = require('request');
-const winston = require('winston');
 const _ = require('lodash');
 
 /**
- * @name rtmStart
- * @description Starts a Real Time Messaging API session.
- * @param {Function} cb Callback function
- * @see https://api.slack.com/methods/rtm.start
+ * @name api
+ * @description A wrapper around Slack's API that contains a set of convenience
+ *   methods, allowing for quick and easy communication with the API.
+ * @return {Object} Collection of convenience methods.
  */
-function rtmStart(token, cb) {
-  apiCall(token, 'rtm.start', null, cb);
-}
+function api() {
 
-/**
- * @name postMessage
- * @description Posts a message to a public channel, private group, or IM
- *   channel.
- * @param {String} channel Channel
- * @param {String} text Text string
- * @param {Function} cb Callback function
- * @see https://api.slack.com/methods/chat.postMessage
- */
-function postMessage(token, channel, text, options, cb) {
-  const qs = _.extend(options, {
-    text: text,
-    channel: channel,
-    as_user: true
-  });
-
-  console.log(qs);
-
-  apiCall(token, 'chat.postMessage', qs, cb);
-}
-
-/**
- * @name updateMessage
- * @description Updates a message in a channel.
- * @param {String} ts Message timestamp
- * @param {String} channel Channel
- * @param {String} text Text string
- * @param {Function} cb Callback function
- * @see https://api.slack.com/methods/chat.update
- */
-function updateMessage(token, ts, channel, text, cb) {
-  const qs = {
-    ts: ts,
-    channel: channel,
-    text: text
+  return {
+    rtmStart: rtmStart,
+    postMessage: postMessage,
+    updateMessage: updateMessage,
+    deleteMessage: deleteMessage
   };
 
-  apiCall(token, 'chat.update', qs, cb);
-}
+  /**
+   * @name rtmStart
+   * @description Starts a Real Time Messaging API session.
+   * @param {String} token Token of authenticated user
+   * @param {Function} callback
+   * @see https://api.slack.com/methods/rtm.start
+   */
+  function rtmStart(token, callback) {
+    apiCall(token, 'rtm.start', null, callback);
+  }
 
-/**
- * @name deleteMessage
- * @description Deletes a message from a channel.
- * @param {String} ts Message timestamp
- * @param {String} channel Channel
- * @param {Function} cb Callback function
- * @see https://api.slack.com/methods/chat.delete
- */
-function deleteMessage(token, ts, channel, cb) {
-  const qs = {
-    ts: ts,
-    channel: channel
-  };
+  /**
+   * @name postMessage
+   * @description Posts a message to a public channel, private group, or IM
+   *   channel.
+   * @param {String} token Token of authenticated user
+   * @param {String} channel Channel
+   * @param {String} text Text string
+   * @param {Function} callback
+   * @see https://api.slack.com/methods/chat.postMessage
+   */
+  function postMessage(token, channel, text, options, callback) {
+    const qs = _.extend(options, {
+      text: text,
+      channel: channel,
+      as_user: true
+    });
 
-  apiCall(token, 'chat.delete', qs, cb);
-}
+    apiCall(token, 'chat.postMessage', qs, callback);
+  }
 
-/**
- * @private
- * @name apiCall
- * @description Makes a request to Slack's API based on their conventions.
- * @param {String} method The method name
- * @param {Object} qs A key/value pair of query string params
- * @param {Function} cb Callback function
- * @see https://api.slack.com/web
- */
-function apiCall(token, method, qs, cb) {
-  qs = qs || {};
-  qs['token'] = token;
+  /**
+   * @name updateMessage
+   * @description Updates a message in a channel.
+   * @param {String} token Token of authenticated user
+   * @param {String} ts Message timestamp
+   * @param {String} channel Channel
+   * @param {String} text Text string
+   * @param {Function} callback
+   * @see https://api.slack.com/methods/chat.update
+   */
+  function updateMessage(token, ts, channel, text, callback) {
+    const qs = {
+      ts: ts,
+      channel: channel,
+      text: text
+    };
 
-  const options = {
-    url: method,
-    baseUrl: 'https://slack.com/api/',
-    qs: qs
-  };
+    apiCall(token, 'chat.update', qs, callback);
+  }
 
-  request.post(options, (error, response, body) => {
-    if (!error) {
-      if (cb) {
-        if (response.statusCode === 200) {
-          cb(JSON.parse(body));
-        } else {
-          cb({
-            ok: false,
-            error: 'API Response: ' + response.statusCode
-          });
+  /**
+   * @name deleteMessage
+   * @description Deletes a message from a channel.
+   * @param {String} token Token of authenticated user
+   * @param {String} ts Message timestamp
+   * @param {String} channel Channel
+   * @param {Function} callback
+   * @see https://api.slack.com/methods/chat.delete
+   */
+  function deleteMessage(token, ts, channel, callback) {
+    const qs = {
+      ts: ts,
+      channel: channel
+    };
+
+    apiCall(token, 'chat.delete', qs, callback);
+  }
+
+  /**
+   * @name apiCall
+   * @description Makes a request to Slack's API based on their conventions.
+   * @param {String} token Token of authenticated user
+   * @param {String} method The method name
+   * @param {Object} qs A key/value pair of query string params
+   * @param {Function} callback
+   * @see https://api.slack.com/web
+   */
+  function apiCall(token, method, qs, callback) {
+    qs = qs || {};
+    qs['token'] = token;
+
+    const options = {
+      url: method,
+      baseUrl: 'https://slack.com/api/',
+      qs: qs
+    };
+
+    request.post(options, (error, response, body) => {
+      if (!error) {
+        if (callback) {
+          if (response.statusCode === 200) {
+            callback(JSON.parse(body));
+          } else {
+            callback({
+              ok: false,
+              error: 'API Response: ' + response.statusCode
+            });
+          }
+        }
+      } else {
+        switch (error.code) {
+          case 'ENOTFOUND':
+            callback({
+              ok: false,
+              error: 'Address not found when trying to establish RTM connection.'
+            });
+            break;
+          default:
+            callback({
+              ok: false,
+              error: 'Connection to RTM failed.'
+            });
         }
       }
-    } else {
-      winston.error(error);
-    }
-  });
+    });
+  }
+
 }
 
-module.exports = {
-  rtmStart: rtmStart,
-  postMessage: postMessage,
-  updateMessage: updateMessage,
-  deleteMessage: deleteMessage
-};
+module.exports = api();

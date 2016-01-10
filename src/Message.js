@@ -7,7 +7,6 @@
 
 /**
  * @class Message class.
- * @namespace Message
  */
 class Message {
 

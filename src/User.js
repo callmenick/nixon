@@ -7,7 +7,6 @@
 
 /**
  * @class Builds a User.
- * @namespace User
  */
 class User {
 

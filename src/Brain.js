@@ -1,6 +1,6 @@
 /* =============================================================================
     Name: Brain.js
-    Description: The brain of the bot. It performs thinking tasks.
+    Description: The brain of the bot.
     Author: Nick Salloum
     License: MIT
 ============================================================================= */
@@ -11,7 +11,6 @@ const _ = require('lodash');
 
 /**
  * @class The Brain of the Bot. It performs thinking tasks.
- * @namespace Brain
  * @extends {Heart}
  */
 class Brain extends Heart {
@@ -25,10 +24,11 @@ class Brain extends Heart {
   }
 
   /**
-   * @name userFromId
+   * @method userFromId
    * @memberOf Brain
    * @description Fetches a user based on ID.
-   * @return {User} A User instance
+   * @param {String} id The user's ID
+   * @return {User} A User with the provided ID.
    */
   userFromId(id) {
     const user = _.findWhere(this.users, {

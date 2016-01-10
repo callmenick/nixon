@@ -12,8 +12,10 @@ const Rx = require('rx');
 const WebSocket = require('ws');
 
 /**
- * @class The heart of the bot.
- * @namespace Heart
+ * @class The heart of the bot. The Bot must have a heart, and the heart is
+ *   responsible for getting things going. It opens up a Real Time Messaging
+ *   session, establishes a Web Socket connection, and populates some important
+ *   variables that the Bot will later use for communication.
  * @extends {EventEmitter}
  */
 class Heart extends EventEmitter {
@@ -43,34 +45,44 @@ class Heart extends EventEmitter {
   }
 
   /**
-   * @name heartEvents
+   * @method heartEvents
    * @memberOf Heart
-   * @description Heart specific events.
+   * @description Specific event listeners for the Heart.
+   * @return Nothing.
    */
   heartEvents() {
     this.on('heart.beating', this.beating);
-    this.on('heart.stopped', this.stopped);
+    this.on('heart.notBeating', this.notBeating);
   }
 
   /**
-   * @name beat
+   * @method beat
    * @memberOf Heart
-   * @description Makes the heart beat.
+   * @description Attempts to establish a connection to Slack's Real Time
+   *   Messaging API. If the connection was successful, the heart.beating event
+   *   gets emitted. If the connection was unsuccessful, the heart.notBeating
+   *   event gets emitted.
+   * @return Nothing.
    */
   beat() {
     api.rtmStart(this.token, response => {
       if (response.ok) {
         this.emit('heart.beating', response);
       } else {
-        this.emit('heart.stopped', response);
+        this.emit('heart.notBeating', response);
       }
     });
   }
 
   /**
-   * @name beating
+   * @method beating
    * @memberOf Heart
-   * @description Heart is beating.
+   * @description Fires when the heart is successfully beating, which is a
+   *   result of a successful connection to the Real Time Messaging API. At this
+   *   point, important info gets populated, the message stream gets created,
+   *   and and a socket connection is established.
+   * @param {Object} response The response from the API call
+   * @return Nothing.
    */
   beating(response) {
     log('success', 'Heart beating...');
@@ -80,27 +92,31 @@ class Heart extends EventEmitter {
     this.ims = response.ims;
     this.users = response.users;
     this.url = response.url;
-    this._createMessageStream();
-    this._openConnection();
+    this.createMessageStream();
+    this.openConnection();
   }
 
   /**
-   * @name stopped
+   * @method notBeating
    * @memberOf Heart
-   * @description Heart has stopped.
+   * @description Fires when the heart isn't beating, and attempts to reconnect
+   *   after 5 seconds.
+   * @param {Object} response The response from the API call
+   * @return Nothing.
    */
-  stopped() {
-    log('error', 'Heart stopped, attempting to reconnect in 5s...');
+  notBeating(response) {
+    log('error', response.error);
+    log('info', 'Attempting to reconnect in 5s...');
     setTimeout(() => this.beat(), 5000);
   }
 
   /**
-   * @private
-   * @name _createMessageStream
+   * @method createMessageStream
    * @memberOf Heart
    * @description Creates a message stream based on events.
+   * @return Nothing.
    */
-  _createMessageStream() {
+  createMessageStream() {
     log('info', 'Creating message stream...');
 
     this.messages = Rx.Observable
@@ -111,46 +127,50 @@ class Heart extends EventEmitter {
   }
 
   /**
-   * @private
-   * @name _openConnection
+   * @method openConnection
    * @memberOf Heart
    * @description Opens a WebSocket connection and listens for events.
+   * @return Nothing.
    */
-  _openConnection() {
+  openConnection() {
     log('info', 'Opening ws connection...');
     this.ws = new WebSocket(this.url);
-    this.ws.on('open', () => this._onConnectionOpen());
-    this.ws.on('error', () => this._onConnectionError());
+    this.ws.on('open', () => this.onConnectionOpen());
+    this.ws.on('error', () => this.onConnectionError());
   }
 
   /**
-   * @private
-   * @name _onConnectionOpen
+   * @method onConnectionOpen
    * @memberOf Heart
    * @description Runs when web sockets connection successfully opens.
+   * @return Nothing.
    */
-  _onConnectionOpen() {
+  onConnectionOpen() {
     log('success', 'Ws connection open...');
-    this._onMessageListener();
+    this.onMessage();
     this.emit('bot.connected');
   }
 
   /**
-   * @private
-   * @name _onConnectionError
+   * @method onConnectionError
    * @memberOf Heart
-   * @description Runs when web sockets connection fails.
+   * @description Callback that fires when the Web Socket connection fails.
+   *   Waits 5s before attempting to reconnect.
+   * @return Nothing.
    */
-  _onConnectionError() {
-    console.log('Ws connection error...');
+  onConnectionError() {
+    log('error', 'Ws connection error, attempting to restablish in 5s...');
+    setTimeout(() => this.openConnection(), 5000);
   }
 
   /**
-   * @private
-   * @name _onMessageListener
+   * @method onMessage
    * @memberOf Heart
+   * @description Listens for Web Socket message events, and emits a message
+   *   event to the message emitter.
+   * @return Nothing.
    */
-  _onMessageListener() {
+  onMessage() {
     this.ws.on('message', response => {
       this.emit('message', JSON.parse(response));
     });

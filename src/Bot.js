@@ -15,7 +15,6 @@ const _ = require('lodash');
 
 /**
  * @class The friendly Bot.
- * @namespace Bot
  * @extends {Heart}
  */
 class Bot extends Brain {
@@ -33,31 +32,34 @@ class Bot extends Brain {
   }
 
   /**
-   * @name botEvents
+   * @method botEvents
    * @memberOf Bot
    * @description Bot specific events.
+   * @return Nothing.
    */
   botEvents() {
     this.on('bot.connected', this.addModules);
   }
 
   /**
-   * @name listen
+   * @method listen
    * @memberOf Bot
    * @description Listens for messages that match a capture.
-   * @return {Disposable} A disposable subscription
+   * @param {String} capture
+   * @param {Functino} callback
+   * @return {Disposable} A disposable subscription.
    */
   listen(capture, callback) {
     const messages = this.messages
       .filter(m => m && m.user !== this.self.id && m.text && m.text.match(capture));
 
     const subscription = messages.subscribe(
-      (x) => {
+      x => {
         const message = new Message(x, null, this.userFromId(x.user));
         const response = new Response(message, this);
         callback(response);
       },
-      (err) => {
+      err => {
         log('error', err);
       }
     );
@@ -66,7 +68,7 @@ class Bot extends Brain {
   }
 
   /**
-   * @name hear
+   * @method hear
    * @memberOf Bot
    * @description Hears for mentions with the @ symbol in a channel.
    */
@@ -74,7 +76,7 @@ class Bot extends Brain {
   }
 
   /**
-   * @name respond
+   * @method respond
    * @memberOf Bot
    * @description Listens/responds to direct messages.
    */
@@ -82,7 +84,7 @@ class Bot extends Brain {
   }
 
   /**
-   * @name update
+   * @method update
    * @memberOf Bot
    * @description Updates an existing message.
    */
@@ -90,9 +92,10 @@ class Bot extends Brain {
   }
 
   /**
-   * @name addModules
+   * @method addModules
    * @memberOf Bot
    * @description Adds modules (pieces of functionality) to the bot.
+   * @return Nothing.
    */
   addModules() {
     log('info', 'Adding modules...');
