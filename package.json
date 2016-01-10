@@ -19,22 +19,16 @@
     "dateformat": "^1.0.12",
     "dotenv": "^1.2.0",
     "express": "^4.13.3",
-    "ferd": "^0.5.0",
     "lodash": "^3.10.1",
     "log": "^1.4.0",
     "querystring": "^0.2.0",
     "request": "^2.67.0",
     "rx": "^4.0.7",
-    "slack-client": "^1.5.1",
-    "winston": "^2.1.1",
     "ws": "^1.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.6",
     "eslint": "^1.10.3",
-    "grunt": "^0.4.5",
-    "grunt-jsdoc": "^1.1.0",
-    "ink-docstrap": "^1.1.0",
     "morgan": "^1.6.1",
     "nodemon": "^1.8.1",
     "watch": "^0.17.1"
