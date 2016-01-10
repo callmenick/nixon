@@ -10,14 +10,15 @@ const log = require('./util/log.js');
 const Message = require('./Message.js');
 
 /**
- * @class Response class for the bot. The Response class gets instantiated with
- *   an incoming message, and has a send method to send outoing messages.
+ * @class Response
+ * @description Response class for the bot. The Response class gets instantiated
+ *   with an incoming message, and has a send method to send outoing messages.
  */
 class Response {
 
   /**
    * @constructor
-   * @description Constructor for Response class.
+   * @description Constructor for Response.
    * @param {Message} message
    * @param {Bot} bot
    */
@@ -27,8 +28,7 @@ class Response {
   }
 
   /**
-   * @method send
-   * @memberOf Response
+   * @name send
    * @description Posts a message and any attachments to a specific channel.
    * @param {String} message The message string
    * @param {Array} attachments Array of attachments for the response
@@ -49,8 +49,7 @@ class Response {
   }
 
   /**
-   * @method reply
-   * @memberOf Response
+   * @name reply
    * @description Replies to someone directly.
    * @return Nothing
    */

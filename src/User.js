@@ -6,13 +6,14 @@
 ============================================================================= */
 
 /**
- * @class Builds a User.
+ * @class User
+ * @description Builds a User.
  */
 class User {
 
   /**
    * @constructor
-   * @description Constructor for User class.
+   * @description Constructor for User.
    * @param {String} id The user id.
    * @param {Object} user A user response from Slack's API.
    */

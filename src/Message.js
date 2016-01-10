@@ -6,7 +6,8 @@
 ============================================================================= */
 
 /**
- * @class Message class.
+ * @class Message
+ * @description Message class.
  */
 class Message {
 

@@ -14,14 +14,15 @@ const Response = require('./Response.js');
 const _ = require('lodash');
 
 /**
- * @class The friendly Bot.
+ * @class Bot
+ * @description The friendly Bot.
  * @extends {Heart}
  */
 class Bot extends Brain {
 
   /**
    * @constructor
-   * @description Constructor for Bot class.
+   * @description Constructor for Bot.
    */
   constructor(token) {
     super(token);
@@ -32,8 +33,7 @@ class Bot extends Brain {
   }
 
   /**
-   * @method botEvents
-   * @memberOf Bot
+   * @name botEvents
    * @description Bot specific events.
    * @return Nothing.
    */
@@ -42,8 +42,7 @@ class Bot extends Brain {
   }
 
   /**
-   * @method listen
-   * @memberOf Bot
+   * @name listen
    * @description Listens for messages that match a capture.
    * @param {String} capture
    * @param {Functino} callback
@@ -68,32 +67,28 @@ class Bot extends Brain {
   }
 
   /**
-   * @method hear
-   * @memberOf Bot
+   * @name hear
    * @description Hears for mentions with the @ symbol in a channel.
    */
   hear() {
   }
 
   /**
-   * @method respond
-   * @memberOf Bot
+   * @name respond
    * @description Listens/responds to direct messages.
    */
   respond() {
   }
 
   /**
-   * @method update
-   * @memberOf Bot
+   * @name update
    * @description Updates an existing message.
    */
   update() {
   }
 
   /**
-   * @method addModules
-   * @memberOf Bot
+   * @name addModules
    * @description Adds modules (pieces of functionality) to the bot.
    * @return Nothing.
    */

@@ -28,6 +28,7 @@ function api() {
    * @description Starts a Real Time Messaging API session.
    * @param {String} token Token of authenticated user
    * @param {Function} callback
+   * @return Nothing
    * @see https://api.slack.com/methods/rtm.start
    */
   function rtmStart(token, callback) {
@@ -42,6 +43,7 @@ function api() {
    * @param {String} channel Channel
    * @param {String} text Text string
    * @param {Function} callback
+   * @return Nothing
    * @see https://api.slack.com/methods/chat.postMessage
    */
   function postMessage(token, channel, text, options, callback) {
@@ -62,6 +64,7 @@ function api() {
    * @param {String} channel Channel
    * @param {String} text Text string
    * @param {Function} callback
+   * @return Nothing
    * @see https://api.slack.com/methods/chat.update
    */
   function updateMessage(token, ts, channel, text, callback) {
@@ -81,6 +84,7 @@ function api() {
    * @param {String} ts Message timestamp
    * @param {String} channel Channel
    * @param {Function} callback
+   * @return Nothing
    * @see https://api.slack.com/methods/chat.delete
    */
   function deleteMessage(token, ts, channel, callback) {
@@ -98,7 +102,8 @@ function api() {
    * @param {String} token Token of authenticated user
    * @param {String} method The method name
    * @param {Object} qs A key/value pair of query string params
-   * @param {Function} callback
+   * @param {Function} callback Callback that runs with response data
+   * @return Nothing
    * @see https://api.slack.com/web
    */
   function apiCall(token, method, qs, callback) {
