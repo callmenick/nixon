@@ -6,8 +6,8 @@
 ============================================================================= */
 
 const api = require('./api.js');
-const log = require('./util/log.js');
 const Message = require('./Message.js');
+const _ = require('lodash');
 
 /**
  * @class Response
@@ -19,12 +19,12 @@ class Response {
   /**
    * @constructor
    * @description Constructor for Response.
-   * @param {Message} message
+   * @param {Message} incoming
    * @param {Bot} bot
    */
-  constructor(message, bot) {
+  constructor(incoming, bot) {
+    this.incoming = incoming;
     this.bot = bot;
-    this.incoming = new Message(message);
   }
 
   /**
@@ -34,18 +34,13 @@ class Response {
    * @param {Array} attachments Array of attachments for the response
    * @return Nothing
    */
-  send(message, attachments) {
-    this.outgoing = new Message(message, attachments, this.bot);
+  send(message, callback) {
+    this.outgoing = new Message(_.extend(message, {
+      user: this.bot.self.id,
+      channel: this.incoming.channel
+    }));
 
-    api.postMessage(
-      this.bot.token,
-      this.incoming.channel,
-      this.outgoing.text,
-      this.outgoing.options,
-      response => {
-        log('info', response);
-      }
-    );
+    api.postMessage(this.bot.token, this.outgoing, callback);
   }
 
   /**
