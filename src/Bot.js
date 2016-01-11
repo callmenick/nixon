@@ -46,24 +46,20 @@ class Bot extends Brain {
    * @description Listens for messages that match a capture.
    * @param {String} capture
    * @param {Functino} callback
-   * @return {Disposable} A disposable subscription.
    */
   listen(capture, callback) {
-    const messages = this.messages
-      .filter(m => m && m.user !== this.self.id && m.text && m.text.match(capture));
-
-    const subscription = messages.subscribe(
-      x => {
-        const message = new Message(x, null, this.userFromId(x.user));
-        const response = new Response(message, this);
+    this.messages
+      .filter(m => m && m.user !== this.self.id && m.text && m.text.match(capture))
+      .subscribe(
+      message => {
+        const incoming = new Message(message);
+        const response = new Response(incoming, this);
         callback(response);
       },
-      err => {
-        log('error', err);
+      error => {
+        log('error', error);
       }
     );
-
-    return subscription;
   }
 
   /**
