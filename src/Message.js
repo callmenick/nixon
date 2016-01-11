@@ -15,12 +15,12 @@ class Message {
    * @constructor
    * @description Constructor for Message class.
    */
-  constructor(message, attachments) {
-    this.text = message.text || message;
-    this.channel = message.channel || null;
-    this.attachments = attachments ? JSON.stringify(attachments) : null;
-    this.options = {};
-    if (this.attachments) { this.options['attachments'] = this.attachments; }
+  constructor(message) {
+    this.user = message.user;
+    this.text = message.text;
+    this.channel = message.channel;
+    this.ts = message.ts ? message.ts : null;
+    this.attachments = message.attachments ? JSON.stringify(message.attachments) : null;
   }
 
 }
