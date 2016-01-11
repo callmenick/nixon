@@ -11,7 +11,11 @@
 function scheduler(bot) {
 
   bot.listen(/schedule/, response => {
-    response.send('Time to create a schedule!');
+    const message = {
+      text: 'Time to create a schedule!'
+    };
+
+    response.send(message);
   });
 
 }
