@@ -25,22 +25,22 @@ function getTime() {
  * @memberOf log
  * @description Prints a formatted message to the console.
  */
-function log(type, message) {
+function log(type, ...messages) {
   switch (type) {
     case 'success':
-      console.log(chalk.green('Success:'), chalk.gray(getTime()), message);
+      console.log.call(console, chalk.green('Success:'), chalk.gray(getTime()), ...messages);
       break;
     case 'error':
-      console.log(chalk.red('Error:'), chalk.gray(getTime()), message);
+      console.log.call(console, chalk.red('Error:'), chalk.gray(getTime()), ...messages);
       break;
     case 'warn':
-      console.log(chalk.yellow('Warning:'), chalk.gray(getTime()), message);
+      console.log.call(console, chalk.yellow('Warning:'), chalk.gray(getTime()), ...messages);
       break;
     case 'info':
-      console.log(chalk.blue('Info:'), chalk.gray(getTime()), message);
+      console.log.call(console, chalk.blue('Info:'), chalk.gray(getTime()), ...messages);
       break;
     default:
-      console.log(chalk.blue('Info:'), chalk.gray(getTime()), message);
+      console.log.call(console, chalk.blue('Info:'), chalk.gray(getTime()), ...messages);
   }
 }
 
