@@ -132,6 +132,7 @@ class Heart extends EventEmitter {
     this.ws = new WebSocket(this.url);
     this.ws.on('open', () => this.onConnectionOpen());
     this.ws.on('error', () => this.onConnectionError());
+    this.ws.on('message', response => this.onMessage(response));
   }
 
   /**
@@ -141,7 +142,6 @@ class Heart extends EventEmitter {
    */
   onConnectionOpen() {
     log('success', 'Ws connection open...');
-    this.onMessage();
     this.emit('bot.connected');
   }
 
@@ -162,10 +162,8 @@ class Heart extends EventEmitter {
    *   event to the message emitter.
    * @return Nothing
    */
-  onMessage() {
-    this.ws.on('message', response => {
-      this.emit('message', JSON.parse(response));
-    });
+  onMessage(response) {
+    this.emit('message', JSON.parse(response));
   }
 
 }
