@@ -1,2 +1,7 @@
-# NickBot
+# Nixon
 
+A modular SlackBot.
+
+## License
+
+MIT
