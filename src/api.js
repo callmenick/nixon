@@ -6,7 +6,6 @@
 ============================================================================= */
 
 const request = require('request');
-const _ = require('lodash');
 
 /**
  * @name api
@@ -32,7 +31,13 @@ function api() {
    * @see https://api.slack.com/methods/rtm.start
    */
   function rtmStart(token, callback) {
-    apiCall(token, 'rtm.start', null, callback);
+    apiCall(token, 'rtm.start', null, callback)
+      .then(response => {
+        callback(response);
+      })
+      .catch(error => {
+        callback(error);
+      });
   }
 
   /**
@@ -40,20 +45,26 @@ function api() {
    * @description Posts a message to a public channel, private group, or IM
    *   channel.
    * @param {String} token Token of authenticated user
-   * @param {String} channel Channel
-   * @param {String} text Text string
+   * @param {Message} message The Message
    * @param {Function} callback
    * @return Nothing
    * @see https://api.slack.com/methods/chat.postMessage
    */
-  function postMessage(token, channel, text, options, callback) {
-    const qs = _.extend(options, {
-      text: text,
-      channel: channel,
+  function postMessage(token, message, callback) {
+    const qs = {
+      text: message.text,
+      channel: message.channel,
+      attachments: message.attachments,
       as_user: true
-    });
+    };
 
-    apiCall(token, 'chat.postMessage', qs, callback);
+    apiCall(token, 'chat.postMessage', qs)
+      .then(response => {
+        if (callback) { callback(response); }
+      })
+      .catch(error => {
+        if (callback) { callback(error); }
+      });
   }
 
   /**
@@ -102,11 +113,10 @@ function api() {
    * @param {String} token Token of authenticated user
    * @param {String} method The method name
    * @param {Object} qs A key/value pair of query string params
-   * @param {Function} callback Callback that runs with response data
    * @return Nothing
    * @see https://api.slack.com/web
    */
-  function apiCall(token, method, qs, callback) {
+  function apiCall(token, method, qs) {
     qs = qs || {};
     qs['token'] = token;
 
@@ -116,33 +126,24 @@ function api() {
       qs: qs
     };
 
-    request.post(options, (error, response, body) => {
-      if (!error) {
-        if (callback) {
+    return new Promise((resolve, reject) => {
+      request.post(options, (error, response, body) => {
+        if (!error) {
           if (response.statusCode === 200) {
-            callback(JSON.parse(body));
+            resolve(JSON.parse(body));
           } else {
-            callback({
+            reject({
               ok: false,
               error: 'API Response: ' + response.statusCode
             });
           }
+        } else {
+          reject({
+            ok: false,
+            error: 'Connection to RTM failed.'
+          });
         }
-      } else {
-        switch (error.code) {
-          case 'ENOTFOUND':
-            callback({
-              ok: false,
-              error: 'Address not found when trying to establish RTM connection.'
-            });
-            break;
-          default:
-            callback({
-              ok: false,
-              error: 'Connection to RTM failed.'
-            });
-        }
-      }
+      });
     });
   }
 
